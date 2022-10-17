@@ -9,6 +9,7 @@ pygame.display.set_caption("Brick Breaker")
 FPS = 60
 PADDLE_WIDTH = 100
 PADDLE_HEIGHT = 15
+BALL_RADIUS = 10
 
 
 class Paddle:
@@ -29,6 +30,26 @@ class Paddle:
         self.x = self.x + self.VEL * direction
 
 
+class Ball:
+    VEL = 5
+
+    def __init__(self, x, y, radius, color):
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.color = color
+        self.x_vel = 0
+        self.y_vel = -self.VEL
+
+    def move(self):
+        self.x += self.x_vel
+        self.y += self.y_vel
+
+    def set_vel(self, x_vel, y_vel):
+        self.x_vel = x_vel
+        self.y_vel = y_vel
+
+
 def draw(win, paddle):
     win.fill("white")
     paddle.draw(win)
@@ -38,8 +59,10 @@ def draw(win, paddle):
 def main():
     clock = pygame.time.Clock()
 
-    paddle = Paddle(WIDTH/2 - PADDLE_WIDTH/2, HEIGHT -
-                    PADDLE_HEIGHT - 5, PADDLE_WIDTH, PADDLE_HEIGHT, 'black')
+    center_x = WIDTH/2 - PADDLE_WIDTH/2
+    paddle_y = HEIGHT - PADDLE_HEIGHT - 5
+    paddle = Paddle(center_x, paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT, 'black')
+    ball = Ball(center_x, paddle_y - BALL_RADIUS, BALL_RADIUS, 'black')
 
     run = True
     while run:
@@ -57,7 +80,7 @@ def main():
         if keys[pygame.K_RIGHT] and paddle.x + paddle.width + paddle.VEL <= WIDTH:
             paddle.move(1)
 
-        draw(win, paddle)
+        draw(win, paddle, ball)
 
     pygame.quit()
     quit()
