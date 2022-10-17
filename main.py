@@ -49,10 +49,14 @@ class Ball:
         self.x_vel = x_vel
         self.y_vel = y_vel
 
+    def draw(self, win):
+        pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
 
-def draw(win, paddle):
+
+def draw(win, paddle, ball):
     win.fill("white")
     paddle.draw(win)
+    ball.draw(win)
     pygame.display.update()
 
 
@@ -80,6 +84,7 @@ def main():
         if keys[pygame.K_RIGHT] and paddle.x + paddle.width + paddle.VEL <= WIDTH:
             paddle.move(1)
 
+        ball.move()
         draw(win, paddle, ball)
 
     pygame.quit()
