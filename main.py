@@ -74,7 +74,11 @@ class Brick:
         if not (ball.y + ball.radius >= self.y):
             return False
 
+        self.hit()
         return True
+
+    def hit(self):
+        self.health -= 1
 
 
 def draw(win, paddle, ball):
