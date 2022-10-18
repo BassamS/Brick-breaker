@@ -81,10 +81,14 @@ class Brick:
         self.health -= 1
 
 
-def draw(win, paddle, ball):
+def draw(win, paddle, ball, bricks):
     win.fill("white")
     paddle.draw(win)
     ball.draw(win)
+
+    for brick in bricks:
+        brick.draw(win)
+
     pygame.display.update()
 
 
@@ -123,7 +127,7 @@ def generate_bricks(rows, cols):
     for row in range(rows):
         for col in range(cols):
             brick = Brick(col * brick_width + gap, row *
-                          brick_height + gap, brick_width, brick_height)
+                          brick_height + gap, brick_width, brick_height, 5, "green")
             bricks.append(brick)
 
     return bricks
@@ -136,6 +140,8 @@ def main():
     paddle_y = HEIGHT - PADDLE_HEIGHT - 5
     paddle = Paddle(WIDTH/2, paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT, 'black')
     ball = Ball(WIDTH/2, paddle_y - BALL_RADIUS, BALL_RADIUS, 'black')
+
+    bricks = generate_bricks(3, 10)
 
     run = True
     while run:
@@ -156,7 +162,14 @@ def main():
         ball.move()
         ball_collision(ball)
         ball_paddle_collision(ball, paddle)
-        draw(win, paddle, ball)
+
+        for brick in bricks[:]:
+            brick.collide(ball)
+
+            if brick.health <= 0:
+                bricks.remove(brick)
+
+        draw(win, paddle, ball, bricks)
 
     pygame.quit()
     quit()
