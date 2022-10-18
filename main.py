@@ -183,6 +183,13 @@ def main():
             if brick.health <= 0:
                 bricks.remove(brick)
 
+        # Lives check
+        if ball.y + ball.radius >= HEIGHT:
+            lives -= 1
+            ball.x = paddle.x + paddle.width/2
+            ball.y = paddle.y - BALL_RADIUS
+            ball.set_vel(0, ball.VEL * -1)
+
         draw(win, paddle, ball, bricks, lives)
 
     pygame.quit()
