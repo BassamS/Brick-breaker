@@ -55,14 +55,15 @@ class Ball:
 
 
 class Brick:
-
-    def __init__(self, x, y, width, height, health, color):
+    def __init__(self, x, y, width, height, health, colors):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.health = health
-        self.color = color
+        self.max_health = health
+        self.colors = colors
+        self.color = colors[0]
 
     def draw(self, win):
         pygame.draw.rect(
@@ -80,6 +81,12 @@ class Brick:
 
     def hit(self):
         self.health -= 1
+        self.color = self.interpolate(
+            *self.colors, self.health/self.max_health)
+
+    @staticmethod
+    def interpolate(color_a, color_b, t):
+        return tuple(int(a + (b - a) * t) for a, b in zip(color_a, color_b))
 
 
 def draw(win, paddle, ball, bricks):
@@ -128,7 +135,7 @@ def generate_bricks(rows, cols):
     for row in range(rows):
         for col in range(cols):
             brick = Brick(col * brick_width + gap * col, row *
-                          brick_height + gap * row, brick_width, brick_height, 5, "green")
+                          brick_height + gap * row, brick_width, brick_height, 5, [(0, 255, 0), (255, 0, 0)])
             bricks.append(brick)
 
     return bricks
