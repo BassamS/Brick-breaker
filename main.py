@@ -64,6 +64,18 @@ class Brick:
         self.health = health
         self.color = color
 
+    def draw(self, win):
+        pygame.draw.rect(
+            win, self.color, (self.x, self.y, self.width, self.height))
+
+    def collide(self, ball):
+        if not (ball.x <= self.x + self.width and ball.x >= self.x):
+            return False
+        if not (ball.y + ball.radius >= self.y):
+            return False
+
+        return True
+
 
 def draw(win, paddle, ball):
     win.fill("white")
