@@ -114,6 +114,21 @@ def ball_paddle_collision(ball, paddle):
     ball.set_vel(x_vel, y_vel)
 
 
+def generate_bricks(rows, cols):
+    gap = 2
+    brick_width = (WIDTH // rows) - gap
+    brick_height = 30
+
+    bricks = []
+    for row in range(rows):
+        for col in range(cols):
+            brick = Brick(col * brick_width + gap, row *
+                          brick_height + gap, brick_width, brick_height)
+            bricks.append(brick)
+
+    return bricks
+
+
 def main():
     clock = pygame.time.Clock()
 
