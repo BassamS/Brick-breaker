@@ -12,6 +12,8 @@ PADDLE_WIDTH = 100
 PADDLE_HEIGHT = 15
 BALL_RADIUS = 10
 
+LIVES_FONT = pygame.font.SysFont("comicsans", 40)
+
 
 class Paddle:
     VEL = 5
@@ -89,13 +91,16 @@ class Brick:
         return tuple(int(a + (b - a) * t) for a, b in zip(color_a, color_b))
 
 
-def draw(win, paddle, ball, bricks):
+def draw(win, paddle, ball, bricks, lives):
     win.fill("white")
     paddle.draw(win)
     ball.draw(win)
 
     for brick in bricks:
         brick.draw(win)
+
+    lives_text = LIVES_FONT.render(f"Lives: {lives}", 1, "black")
+    win.blit(lives_text, (10, HEIGHT - lives_text.get_height() - 10))
 
     pygame.display.update()
 
@@ -135,7 +140,7 @@ def generate_bricks(rows, cols):
     for row in range(rows):
         for col in range(cols):
             brick = Brick(col * brick_width + gap * col, row *
-                          brick_height + gap * row, brick_width, brick_height, 5, [(0, 255, 0), (255, 0, 0)])
+                          brick_height + gap * row, brick_width, brick_height, 2, [(0, 255, 0), (255, 0, 0)])
             bricks.append(brick)
 
     return bricks
@@ -150,6 +155,7 @@ def main():
     ball = Ball(WIDTH/2, paddle_y - BALL_RADIUS, BALL_RADIUS, 'black')
 
     bricks = generate_bricks(3, 10)
+    lives = 3
 
     run = True
     while run:
@@ -177,7 +183,7 @@ def main():
             if brick.health <= 0:
                 bricks.remove(brick)
 
-        draw(win, paddle, ball, bricks)
+        draw(win, paddle, ball, bricks, lives)
 
     pygame.quit()
     quit()
