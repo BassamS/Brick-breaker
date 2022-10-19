@@ -41,7 +41,7 @@ class Ball:
         self.y = y
         self.radius = radius
         self.color = color
-        self.x_vel = 2
+        self.x_vel = 0
         self.y_vel = -self.VEL
 
     def move(self):
@@ -88,6 +88,9 @@ class Brick:
 
     @staticmethod
     def interpolate(color_a, color_b, t):
+        # 'color_a' and 'color_b' are RGB tuples
+        # 't' is a value between 0.0 and 1.0
+        # this is a naive interpolation
         return tuple(int(a + (b - a) * t) for a, b in zip(color_a, color_b))
 
 
@@ -139,8 +142,8 @@ def generate_bricks(rows, cols):
     bricks = []
     for row in range(rows):
         for col in range(cols):
-            brick = Brick(col * brick_width + gap * col, row *
-                          brick_height + gap * row, brick_width, brick_height, 2, [(0, 255, 0), (255, 0, 0)])
+            brick = Brick(col * brick_width + gap * col, row * brick_height +
+                          gap * row, brick_width, brick_height, 2, [(0, 255, 0), (255, 0, 0)])
             bricks.append(brick)
 
     return bricks
@@ -151,11 +154,24 @@ def main():
 
     paddle_x = WIDTH/2 - PADDLE_WIDTH/2
     paddle_y = HEIGHT - PADDLE_HEIGHT - 5
-    paddle = Paddle(WIDTH/2, paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT, 'black')
-    ball = Ball(WIDTH/2, paddle_y - BALL_RADIUS, BALL_RADIUS, 'black')
+    paddle = Paddle(paddle_x, paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT, "black")
+    ball = Ball(WIDTH/2, paddle_y - BALL_RADIUS, BALL_RADIUS, "black")
 
     bricks = generate_bricks(3, 10)
     lives = 3
+
+    def reset():
+        paddle.x = paddle_x
+        paddle.y = paddle_y
+        ball.x = WIDTH/2
+        ball.y = paddle_y - BALL_RADIUS
+
+    def display_text(text):
+        text_render = LIVES_FONT.render(text, 1, "red")
+        win.blit(text_render, (WIDTH/2 - text_render.get_width() /
+                               2, HEIGHT/2 - text_render.get_height()/2))
+        pygame.display.update()
+        pygame.time.delay(3000)
 
     run = True
     while run:
@@ -191,21 +207,17 @@ def main():
             ball.set_vel(0, ball.VEL * -1)
 
         if lives <= 0:
-            paddle = Paddle(WIDTH/2, paddle_y, PADDLE_WIDTH,
-                            PADDLE_HEIGHT, 'black')
-            ball = Ball(WIDTH/2, paddle_y - BALL_RADIUS, BALL_RADIUS, 'black')
-
             bricks = generate_bricks(3, 10)
             lives = 3
+            reset()
+            display_text("You Lost!")
 
-            lost_text = LIVES_FONT.render("You lost!", 1, "red")
-            win.blit(lost_text, (WIDTH/2 - lost_text.get_width() /
-                     2, HEIGHT/2 - lost_text.get_height()/2))
+        if len(bricks) == 0:
+            bricks = generate_bricks(3, 10)
+            lives = 3
+            reset()
+            display_text("You Won!")
 
-            pygame.display.update()
-            pygame.time.delay(3000)
-
-# 48min
         draw(win, paddle, ball, bricks, lives)
 
     pygame.quit()
